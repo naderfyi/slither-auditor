@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Solidity Auditor</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div id="divBody">
+      <form id="uploadForm" enctype="multipart/form-data" method="post">
+         <h1>Solidity Auditor</h1>
+         <p><small>Upload Solidity file (.sol) :</small></p>
+        <input type="file" name="selectedFile" id="selectedFile" accept=".sol"/><br><br>
+        <input type="submit" value="Upload File" class="form-submit-button" />
+      </form>
+    <br>
+      <label id="CompilerVersion"></label>
+      <p id="AuditResults"></p>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

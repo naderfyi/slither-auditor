@@ -1,0 +1,80 @@
+body {
+  font-family: sans-serif;
+}
+.form-container {
+  width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+#divBody {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: left;
+}
+form {
+  margin: 20px 0;
+}
+input[type="file"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type="submit"], input[type="button"] {
+  width: 100%;
+  margin-top: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+input[type="submit"]:hover, input[type="button"]:hover {
+  background-color: #45a049;
+}
+#uploadForm {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.form-submit-button {
+  width: 100%;
+  margin-top: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#referenceList {
+  font-size: 14pt;
+  font-weight: normal;
+}
+#referencesHeader {
+  font-size: 16pt;
+  font-weight: bold;
+  text-decoration: underline;
+  margin-top: 20px;
+}
+#CompilerVersion {
+  font-size: 16pt;
+  font-weight: bold;
+  color: #4CAF50; /* Green */
+  margin: 20px 0;
+}
+.red {
+  color: red;
+}
