@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -13,6 +14,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+type Detector struct {
+	Check       string `json:"Check"`
+	Description string `json:"Description"`
+	Impact      string `json:"Impact"`
+	Confidence  string `json:"Confidence"`
+}
 
 func main() {
 	// Create Gin engine
@@ -75,8 +83,6 @@ func uploadFile(c *gin.Context) {
 		output, err := runSlither(dstFilePath, compilerVersion)
 		if err != nil {
 			fmt.Println(err)
-		} else {
-			fmt.Println(output)
 		}
 
 		// Parse the output as a string
@@ -87,7 +93,23 @@ func uploadFile(c *gin.Context) {
 			log.Printf("Error deleting file: %v", err)
 		}
 
-		c.JSON(http.StatusOK, results)
+		//c.JSON(http.StatusOK, results)
+
+		jsonIssues, err := getIssues(results)
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("Error getting issues: %s", err.Error()))
+			return
+		}
+		//println(string(jsonIssues))
+		//c.JSON(http.StatusOK, jsonIssues)
+		var result map[string][]Detector
+		json.Unmarshal(jsonIssues, &result)
+
+		response := map[string]interface{}{
+			"compilerVersion": compilerVersion,
+			"issues":          result,
+		}
+		c.JSON(http.StatusOK, response)
 	}
 }
 
@@ -130,4 +152,65 @@ func runSlither(filePath string, compilerVersion string) (string, error) {
 	outputStr := string(output)
 
 	return outputStr, nil
+}
+
+func getIssues(output string) ([]byte, error) {
+	detectors := extractSlitherDetectors()
+
+	issues := make(map[string][]Detector)
+	for _, detector := range detectors {
+		check := detector.Check
+		if _, ok := issues[check]; !ok {
+			issues[check] = []Detector{}
+		}
+		if strings.Contains(output, check) {
+			issues[check] = append(issues[check], detector)
+		}
+	}
+
+	jsonIssues, err := json.Marshal(issues)
+	if err != nil {
+		return nil, err
+	}
+
+	return jsonIssues, nil
+}
+
+func extractSlitherDetectors() []Detector {
+	detectors := []Detector{}
+
+	output, err := exec.Command("slither", "--list-detectors").Output()
+	if err != nil {
+		fmt.Println("Error running slither --list-detectors")
+	}
+	outputStr := string(output)
+	lines := strings.Split(outputStr, "\n")
+	for i, line := range lines {
+		if i < 3 || i > len(lines)-3 {
+			continue
+		}
+
+		parts := strings.Fields(line)
+		oneline := strings.Join(parts[2:len(parts)-1], " ")
+		// Split the line by "|"
+		words := strings.Split(oneline, "|")
+
+		// Trim whitespace from the parts
+		for i := range words {
+			words[i] = strings.TrimSpace(words[i])
+		}
+
+		check := words[1]
+		description := words[2]
+		impact := words[3]
+		confidence := words[4]
+
+		detectors = append(detectors, Detector{
+			Check:       check,
+			Description: description,
+			Impact:      impact,
+			Confidence:  confidence,
+		})
+	}
+	return detectors
 }
