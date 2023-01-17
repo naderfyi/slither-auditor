@@ -1,4 +1,4 @@
-# Solidity-Analysis-Tool
+# NB-Auditor
 
 This is a Go program that uses the Gin framework to handle HTTP requests and file uploads. When a user makes a POST request to the "/uploadfile" endpoint, the program reads the uploaded file, saves it to the "files" directory, then calls the getCompilerVersion() and runSlither() functions with the file path. 
 
